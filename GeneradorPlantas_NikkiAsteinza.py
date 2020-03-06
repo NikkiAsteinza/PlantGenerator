@@ -1,10 +1,9 @@
-#from joblib import Parallel, delayed
-#import multiprocessing
+from joblib import Parallel, delayed
+import multiprocessing
 import turtle
 import random
 import os
 import time
-#Path
 currentpath= os.path.dirname(os.path.realpath(__file__))
 screen = turtle.Screen()
 #Tamaño de la ventana
@@ -19,21 +18,20 @@ screen.update
 #Titulo de la ventana
 screen.title("Generador de plantas - Nikki Asteinza")
 #Fondo de la ventana
-screen.bgcolor("black");
+screen.bgcolor("black")
 #Velocidad de movimiento
 move_speed =50
-#Nucleos
-#threads = multiprocessing.cpu_count()
-variables = ['F','X']
-regla = ["F", "F[-FX]F[+FX][F]"]
-axioma = "X"
+#variables
+regla =  "F[-F]F[+F][F]"
+axioma = "F"
 
-height = 10
+height = 5
 turn = 30
 stack = []
 dirstack = []
+
 pens = []
-#Main
+
 pens.append(turtle.Turtle())
 pens[0].pencolor("green")
 pens[0].left(90)
@@ -45,7 +43,7 @@ pens[0].pensize(2)
 mainPSize =pens[0].pensize()
 #Pen2
 pens.append(turtle.Turtle())
-pens[1].pencolor("#ffd800")
+pens[1].pencolor("#eeffba")
 rnd = random.uniform(-0.1, 0.1)
 posVariation = mainPSize-(1+ rnd)
 pens[1].left(90-posVariation)
@@ -53,7 +51,7 @@ pens[1].penup()
 pens[1].setpos(0, -120)
 pens[1].pendown()
 pens[1].shape("turtle")
-pens[1].pensize(2)
+pens[1].pensize(1)
 #Pen3
 pens.append(turtle.Turtle())
 pens[2].pencolor("#14a81b")
@@ -67,25 +65,20 @@ pens[2].shape("turtle")
 pens[2].pensize(1)
 
 def generate(iteration):
-	result = axioma
-	temp = ""
+	result = regla
 	for i in range(iteration):
-		for j in range(len(result)):
-			for k in range(len(variables)):
-				if (result[j] == variables[k]):
-					temp += regla[k]
-					break
-				if (k == len(variables)-1):
-					temp += result[j]
-		result = temp
-		temp = ""
+		result= result.replace(axioma, regla)
+	print(result)
 	return result
+
 def draw(input,pen):
 	p= pen
 	p.speed(move_speed)
 	for x in input:
 		if (x == 'F'):
+			p.pendown()
 			p.forward(height)
+			p.penup()
 		elif (x == '-'):
 			p.left(turn)
 		elif (x == '+'):
@@ -94,14 +87,14 @@ def draw(input,pen):
 			stack.append(p.pos())
 			dirstack.append(p.heading())
 		elif (x == ']'):
-			p.penup()
+			#p.penup()
 			post = stack.pop()
 			direc = dirstack.pop()
 			p.setpos(post)
 			p.setheading(direc)
-			p.pendown()
 	p.hideturtle()
-input= generate(6);
+
+input= generate(3)
 for p in pens:
 	draw(input,p)
-time.sleep(2.4)
+time.sleep(15)
